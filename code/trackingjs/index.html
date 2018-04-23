@@ -1,0 +1,57 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>tracking.js - first tracking</title>
+  <script src="tracking.js-master/build/tracking-min.js"></script>
+  <style>
+    video, canvas {
+      margin-left: 230px;
+      margin-top: 120px;
+      position: absolute;
+    }
+  </style>
+</head>
+<body>
+  <div class="demo-frame">
+    <div class="demo-container">
+      <video id="video" width="320" height="240" preload autoplay loop muted></video>
+      <canvas id="canvas" width="320" height="240"></canvas>
+    </div>
+  </div>
+
+  <script>
+  //  window.onload = function() {
+      var video = document.getElementById('video');
+      var canvas = document.getElementById('canvas');
+      var context = canvas.getContext('2d');
+
+      // Set ColorTracker custom color: green
+      tracking.ColorTracker.registerColor('green', function(r, g, b) {
+      if (r < 50 && g > 200 && b < 50) {
+        return true;
+      }
+        return false;
+      });
+
+      // Create tracker instance
+      var colors = new tracking.ColorTracker(['magenta', 'cyan', 'yellow']);
+
+      // Set tracker to listen for events
+      colors.on('track', function(event) {
+        if (event.data.length === 0) {
+          // No colors were detected in this frame.
+        } else {
+          event.data.forEach(function(rect) {
+            console.log(rect.x, rect.y, rect.height, rect.width, rect.color);
+          });
+        }
+      });
+
+      // Start tracking - this handles all the logic to process pixels
+      var trackerTask = tracking.track('#video', colors, { camera: true });
+
+  //}
+  </script>
+</body>
+</html>
